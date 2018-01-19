@@ -8,8 +8,13 @@ const router = require('./router');
 const app = new Koa();
 
 app
-  .use(logger())
   .use(errorHandler)
+  .use(logger())
+  .use(jwt({
+    secret,
+  }).unless({
+    path: [/\/register/, /\/login/],
+  }))
   .use(bodyParser())
   .use(router.routes())
   .use(router.allowedMethods());

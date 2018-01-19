@@ -4,8 +4,10 @@ const controller = require('./controller/index');
 const router = new Router();
 
 router
-  .get('/users', controller.UsersController.index)
-  .post('/users/sign_up', controller.UsersController.signUp)
-  .post('/users/sign_in', controller.UsersController.signIn);
+  .post('/api/v1/users/sign_up', controller.UsersController.signUp)
+  .post('/api/v1/users/sign_in', controller.UsersController.signIn)
+  .get('/api/v1/merchants', controller.MerchantsController.index)
+  .post('/api/v1/merchants', controller.MerchantsController.create)
+  .get('/api/v1/merchants/:id', controller.MerchantsController.read);
 
 module.exports = router;
