@@ -1,19 +1,18 @@
 const Koa = require('koa');
 const logger = require('koa-logger');
 const bodyParser = require('koa-bodyparser');
+const jwt = require('koa-jwt');
 const errorHandler = require('./middleware/error');
-
 const router = require('./router');
+const secret = require('../config/config').publicKey;
 
 const app = new Koa();
 
 app
   .use(errorHandler)
   .use(logger())
-  .use(jwt({
-    secret,
-  }).unless({
-    path: [/\/register/, /\/login/],
+  .use(jwt({ secret }).unless({
+    path: [/\/api\/v1\/users\/sign_up/, /\/api\/v1\/users\/sign_in/],
   }))
   .use(bodyParser())
   .use(router.routes())

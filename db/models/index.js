@@ -5,6 +5,7 @@ const Merchant = sequelize.import('./merchant.js');
 const PaymentRecord = sequelize.import('./paymentRecord.js');
 
 Merchant.hasMany(PaymentRecord);
+PaymentRecord.belongsTo(Merchant);
 
 // sequelize.sync({ force: true });
 sequelize.sync({ alter: true });

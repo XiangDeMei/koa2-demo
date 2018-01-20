@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 module.exports = {
   development: {
     username: 'root',
@@ -20,4 +22,5 @@ module.exports = {
     host: process.env.DB_HOSTNAME,
     dialect: 'mysql',
   },
+  publicKey: fs.readFileSync(`${__dirname}/../.ssh/id_rsa.pub`),
 };

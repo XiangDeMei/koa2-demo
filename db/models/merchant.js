@@ -9,7 +9,6 @@ module.exports = (sequelize, DataTypes) => {
     agencyId: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      unique: true,
     },
     name: {
       type: DataTypes.STRING,
