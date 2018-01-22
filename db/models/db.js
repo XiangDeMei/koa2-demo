@@ -15,6 +15,7 @@ const sequelize = new Sequelize(
       timestamps: true,
       underscoredAll: true,
     },
+    timezone: '+08:00',
   },
 );
 

@@ -6,10 +6,6 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       primaryKey: true,
     },
-    type: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
     amount: {
       type: DataTypes.FLOAT,
       allowNull: false,

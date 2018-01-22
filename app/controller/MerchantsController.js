@@ -3,18 +3,19 @@ const { Merchant, PaymentRecord } = require('../../db/models');
 /* eslint camelcase: */
 
 async function index(ctx) {
-  const { page, page_size } = ctx.request.search;
-  try {
-    const merchants = await Merchant.findAll({
-      offset: (page - 1) * page_size || 0,
-      limit: page_size || 10,
-    });
-    ctx.response.body = {
-      merchants,
-    };
-  } catch (error) {
-    ctx.throw(500);
-  }
+  let { page, page_size } = ctx.query;
+  page = Number(page);
+  page_size = Number(page_size);
+  const { count, rows } = await Merchant.findAndCountAll({
+    offset: (page - 1) * page_size || 0,
+    limit: page_size || 10,
+    order: [['createdAt', 'DESC']],
+  });
+  ctx.body = {
+    status: 'success',
+    merchants: rows,
+    count,
+  };
 }
 
 async function create(ctx) {
@@ -34,6 +35,7 @@ async function read(ctx) {
     const merchant = await Merchant.findById(id);
     if (merchant) {
       ctx.response.body = {
+        status: 'success',
         merchant,
       };
     } else {
@@ -46,41 +48,38 @@ async function read(ctx) {
 
 async function readRecords(ctx) {
   const { id } = ctx.params;
-  try {
-    const records = await PaymentRecord.findAndCountAll({
-      where: { MerchantId: id },
-      order: [['createdAt', 'DESC']],
-    });
-    if (records) {
-      ctx.body = {
-        records,
-      };
-    }
-  } catch (error) {
-    console.log(error);
-    ctx.throw(500);
+  let { page, page_size } = ctx.query;
+  page = Number(page);
+  page_size = Number(page_size);
+  const { count, rows } = await PaymentRecord.findAndCountAll({
+    where: { MerchantId: id },
+    offset: (page - 1) * page_size || 0,
+    limit: page_size || 10,
+    order: [['createdAt', 'DESC']],
+  });
+  if (rows) {
+    ctx.body = {
+      records: rows,
+      count,
+    };
   }
 }
 
 async function reNew(ctx) {
   const { id } = ctx.params;
   const { payment_record } = ctx.request.body;
-  try {
-    const merchant = await Merchant.findById(id);
-    if (!merchant) {
-      ctx.throw(400, '该商户不存在');
-    }
-    const record = await PaymentRecord.create({ ...payment_record });
-    record.setMerchant(merchant);
-    if (record) {
-      ctx.body = {
-        message: '创建成功',
-        payment_record: record,
-      };
-    }
-  } catch (error) {
-    console.log(error);
-    ctx.throw(500);
+  const merchant = await Merchant.findById(id);
+  if (!merchant) {
+    ctx.throw(400, '该商户不存在');
+  }
+  const record = await PaymentRecord.create({ ...payment_record });
+  await record.setMerchant(merchant);
+  await merchant.update({ endTime: payment_record.endTime });
+  if (record) {
+    ctx.body = {
+      status: 'success',
+      payment_record: record,
+    };
   }
 }
 

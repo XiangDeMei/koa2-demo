@@ -2,6 +2,7 @@ const Koa = require('koa');
 const logger = require('koa-logger');
 const bodyParser = require('koa-bodyparser');
 const jwt = require('koa-jwt');
+const cors = require('koa2-cors');
 const errorHandler = require('./middleware/error');
 const router = require('./router');
 const secret = require('../config/config').publicKey;
@@ -9,6 +10,7 @@ const secret = require('../config/config').publicKey;
 const app = new Koa();
 
 app
+  .use(cors({ credentials: true }))
   .use(errorHandler)
   .use(logger())
   .use(jwt({ secret }).unless({
