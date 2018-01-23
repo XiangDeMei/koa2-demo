@@ -3,6 +3,8 @@ const jsonwebtoken = require('jsonwebtoken');
 const { User } = require('../../db/models');
 const secret = require('../../config/config').publicKey;
 
+const ADMIN_USER = ['admin'];
+
 async function signUp(ctx) {
   const { name, password } = ctx.request.body;
   if (!name || !password) {
@@ -30,11 +32,20 @@ async function signIn(ctx) {
       data: user,
       exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60),
     }, secret);
-    ctx.response.body = {
-      status: 'success',
-      message: '登录成功',
-      token,
-    };
+    // 用户权限
+    if (ADMIN_USER.includes(name)) {
+      ctx.response.body = {
+        message: '登录成功',
+        authority: 'admin',
+        token,
+      };
+    } else {
+      ctx.response.body = {
+        message: '登录成功',
+        authority: 'user',
+        token,
+      };
+    }
   } else {
     ctx.throw(400, '账号或密码错误');
   }

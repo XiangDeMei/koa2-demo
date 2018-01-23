@@ -1,18 +1,25 @@
+const { Op } = require('sequelize');
 const { Merchant, PaymentRecord } = require('../../db/models');
 
 /* eslint camelcase: */
+/* eslint prefer-const: */
 
 async function index(ctx) {
-  let { page, page_size } = ctx.query;
+  let { page, page_size, endTime, ...queryParams } = ctx.query;
   page = Number(page);
   page_size = Number(page_size);
+  if (endTime) {
+    queryParams.endTime = { [Op.lte]: endTime };
+  }
   const { count, rows } = await Merchant.findAndCountAll({
     offset: (page - 1) * page_size || 0,
     limit: page_size || 10,
     order: [['createdAt', 'DESC']],
+    where: {
+      ...queryParams,
+    },
   });
   ctx.body = {
-    status: 'success',
     merchants: rows,
     count,
   };
@@ -20,13 +27,17 @@ async function index(ctx) {
 
 async function create(ctx) {
   const { merchant } = ctx.request.body;
-  await Merchant.create({ ...merchant }).then((res) => {
-    ctx.response.body = res;
-  }).catch((err) => {
-    if (err.name === 'SequelizeUniqueConstraintError') {
-      ctx.throw(400, '机构号不能重复。');
-    }
+  const merchantExist = await Merchant.findOne({
+    where: {
+      agencyId: merchant.agencyId,
+      type: merchant.type,
+    },
   });
+  if (!merchantExist) {
+    await Merchant.create(merchant);
+  } else {
+    ctx.throw(400, '商户已开通该服务');
+  }
 }
 
 async function read(ctx) {
@@ -71,13 +82,13 @@ async function reNew(ctx) {
   const merchant = await Merchant.findById(id);
   if (!merchant) {
     ctx.throw(400, '该商户不存在');
+    return;
   }
   const record = await PaymentRecord.create({ ...payment_record });
   await record.setMerchant(merchant);
   await merchant.update({ endTime: payment_record.endTime });
   if (record) {
     ctx.body = {
-      status: 'success',
       payment_record: record,
     };
   }

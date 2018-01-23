@@ -20,6 +20,7 @@ app
   .use(router.routes())
   .use(router.allowedMethods());
 
-app.listen(3000);
+app.listen(3000, () => {
+  console.log('server is starting at http://127.0.0.1:3000');
+});
 
-console.log('server is starting at http://127.0.0.1:3000');

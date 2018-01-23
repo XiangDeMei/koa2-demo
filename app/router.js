@@ -1,17 +1,28 @@
 const Router = require('koa-router');
-const controller = require('./controller/index');
+const {
+  UsersController,
+  MerchantsController,
+} = require('./controller/index');
 
 const router = new Router({
   prefix: '/api/v1',
 });
 
+const user = new Router();
+user
+  .post('/sign_up', UsersController.signUp)
+  .post('/sign_in', UsersController.signIn);
+
+const merchant = new Router();
+merchant
+  .get('/', MerchantsController.index)
+  .post('/', MerchantsController.create)
+  .get('/:id', MerchantsController.read)
+  .post('/:id/renew', MerchantsController.reNew)
+  .get('/:id/records', MerchantsController.readRecords);
+
 router
-  .post('/users/sign_up', controller.UsersController.signUp)
-  .post('/users/sign_in', controller.UsersController.signIn)
-  .get('/merchants', controller.MerchantsController.index)
-  .post('/merchants', controller.MerchantsController.create)
-  .get('/merchants/:id', controller.MerchantsController.read)
-  .post('/merchants/:id/renew', controller.MerchantsController.reNew)
-  .get('/merchants/:id/records', controller.MerchantsController.readRecords);
+  .use('/users', user.routes())
+  .use('/merchants', merchant.routes());
 
 module.exports = router;
