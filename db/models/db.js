@@ -12,10 +12,10 @@ const sequelize = new Sequelize(
     dialect: config.dialect,
     define: {
       charset: 'utf8mb4',
-      timestamps: true,
       underscoredAll: true,
     },
     timezone: '+08:00',
+    timestamps: false,
   },
 );
 

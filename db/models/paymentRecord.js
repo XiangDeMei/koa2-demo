@@ -1,3 +1,5 @@
+const moment = require('moment');
+
 module.exports = (sequelize, DataTypes) => {
   const PaymentRecord = sequelize.define('PaymentRecord', {
     id: {
@@ -20,6 +22,24 @@ module.exports = (sequelize, DataTypes) => {
     },
     remark: {
       type: DataTypes.STRING,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      set(createdAt) {
+        this.setDataValue('createdAt', moment(createdAt).format('YYYY-MM-DD HH:mm:ss Z'));
+      },
+      get() {
+        return moment(this.getDataValue('createdAt')).format('YYYY-MM-DD HH:mm:ss Z');
+      },
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      set(updatedAt) {
+        this.setDataValue('updatedAt', moment(updatedAt).format('YYYY-MM-DD HH:mm:ss Z'));
+      },
+      get() {
+        return moment(this.getDataValue('updatedAt')).format('YYYY-MM-DD HH:mm:ss Z');
+      },
     },
   });
   return PaymentRecord;

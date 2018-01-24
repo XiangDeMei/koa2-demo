@@ -42,18 +42,14 @@ async function create(ctx) {
 
 async function read(ctx) {
   const { id } = ctx.params;
-  try {
-    const merchant = await Merchant.findById(id);
-    if (merchant) {
-      ctx.response.body = {
-        status: 'success',
-        merchant,
-      };
-    } else {
-      ctx.throw(404);
-    }
-  } catch (error) {
-    ctx.throw(500);
+  const merchant = await Merchant.findById(id);
+  if (merchant) {
+    ctx.response.body = {
+      status: 'success',
+      merchant,
+    };
+  } else {
+    ctx.throw(404);
   }
 }
 

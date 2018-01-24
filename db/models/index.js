@@ -8,6 +8,9 @@ Merchant.hasMany(PaymentRecord);
 PaymentRecord.belongsTo(Merchant);
 
 // sequelize.sync({ force: true });
+// User.sync({ alter: true });
+// Merchant.sync({ alter: true });
+// PaymentRecord.sync({ alter: true });
 // sequelize.sync({ alter: true });
 sequelize.sync();
 
