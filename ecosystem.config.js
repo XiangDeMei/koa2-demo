@@ -8,7 +8,7 @@ module.exports = {
       name: 'koa2_demo',
       script: './app/app.js',
       watch: true,
-      instances: 4,
+      instances: 1,
       exec_mode: 'cluster',
       env: {
         NODE_ENV: 'development',

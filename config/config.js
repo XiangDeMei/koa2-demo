@@ -23,4 +23,8 @@ module.exports = {
     dialect: 'mysql',
   },
   publicKey: fs.readFileSync(`${__dirname}/../.ssh/id_rsa.pub`),
+  redis_env: {
+    host: '127.0.0.1',
+    port: 6379,
+  },
 };

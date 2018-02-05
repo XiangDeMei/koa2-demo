@@ -1,10 +1,21 @@
 const { Op } = require('sequelize');
 const { Merchant, PaymentRecord } = require('../../db/models');
+const io = require('../socket');
+const rds = require('../../config/redis');
 
 /* eslint camelcase: */
 /* eslint prefer-const: */
 
 async function index(ctx) {
+  await rds.smembers('qwqe', (err, members) => {
+    members.forEach((id) => {
+      if (io.sockets.connected[id] === undefined) {
+        rds.srem('qwqe', id);
+      } else {
+        io.sockets.connected[id].emit('chat message', '回复');
+      }
+    });
+  });
   let { page, page_size, endTime, ...queryParams } = ctx.query;
   page = Number(page);
   page_size = Number(page_size);
