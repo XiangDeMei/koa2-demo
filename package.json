@@ -24,7 +24,9 @@
     "mysql2": "^1.5.1",
     "redis": "^2.8.0",
     "sequelize": "^4.31.2",
-    "socket.io": "^2.0.4"
+    "socket.io": "^2.0.4",
+    "uuid": "^3.2.1",
+    "ws": "^4.0.0"
   },
   "devDependencies": {
     "eslint": "^4.15.0",

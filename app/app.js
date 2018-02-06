@@ -6,6 +6,7 @@ const cors = require('koa2-cors');
 const errorHandler = require('./middleware/error');
 const router = require('./router');
 const secret = require('../config/config').publicKey;
+const wss = require('./ws');
 
 const app = new Koa();
 
