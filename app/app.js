@@ -6,10 +6,21 @@ const cors = require('koa2-cors');
 const errorHandler = require('./middleware/error');
 const router = require('./router');
 const secret = require('../config/config').publicKey;
+const httpProxy = require('http-proxy');
 
+const proxy = httpProxy.createProxyServer();
 const app = new Koa();
 
 app
+  .use((ctx, next) => {
+    const reg = /^\/api\/v1\/image/;
+    if (reg.test(ctx.req.url)) {
+      ctx.response = false;
+      proxy.web(ctx.req, ctx.res, { target: 'http://127.0.0.1:4000' });
+    } else {
+      next();
+    }
+  })
   .use(cors({ credentials: true }))
   .use(errorHandler)
   .use(logger())
